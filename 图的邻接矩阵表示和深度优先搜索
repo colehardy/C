@@ -1,0 +1,72 @@
+#include<stdio.h>
+#include<malloc.h>
+
+//邻接矩阵表示法
+
+//1)构造类型定义
+#define MAXSIZE 100  //图的顶点个数
+int visid[MAXSIZE]={0};
+typedef char datatype;
+typedef struct
+{
+	datatype vexs[MAXSIZE];  //定点信息表
+	int edges[MAXSIZE][MAXSIZE];  //邻接矩阵
+	int n,e;  //顶点数和边数
+}graph;
+
+//2)建邻接矩阵(针对无向图)
+void Create_Graph(graph *ga)
+{
+	int i,j,k;
+	printf("请输入图的顶点数和边数:\n");
+	scanf("%d%d",&(ga->n),&(ga->e));
+	fflush(stdin);
+	printf("请输入顶点信息(顶点编号),建立顶点信息表:\n");
+	for (i=0;i<ga->n;i++)
+		scanf("%c",&(ga->vexs[i]));  //输入顶点信息
+	for (i=0;i<ga->n;i++)
+	{
+		for(j=0;j<ga->n;j++)
+			ga->edges[i][j]=0;
+	}
+	for (k=0;k<ga->e;k++)
+	{
+		printf("请输入第%d条边的顶点序号i,j:",(k+1));
+		scanf("%d%d",&i,&j);
+		ga->edges[i][j]=1;
+		ga->edges[j][i]=1;
+	}
+}
+
+//深度优先搜索法
+void DFSM(graph *g,int i)
+{
+	int j;
+	printf("深度优先遍历结点:%c\n",g->vexs[i]);
+	visid[i]=1;
+	for (j=0;j<g->n;j++)
+	{
+		if ((g->edges[i][j]==1)&&!visid[j])
+			DFSM(g,j);
+	}
+}
+
+void DFS(graph *g)
+{
+	int i;
+	for (i=0;i<g->n;i++)
+		visid[i]=0;
+	for (i=0;i<g->n;i++)
+	{
+		if(!visid[i])
+			DFSM(g,i);
+	}
+}
+
+void main()
+{
+	graph x,*g;
+	g=&x;
+	Create_Graph(g);
+	DFS(g);
+}
