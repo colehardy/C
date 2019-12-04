@@ -1,0 +1,95 @@
+#include<stdio.h>
+#include<malloc.h>
+#define INTMAX 1000
+
+#define MAXSIZE 100  //图的顶点个数
+typedef int datatype;
+typedef struct
+{
+	datatype vexs[MAXSIZE];  //定点信息表
+	int edges[MAXSIZE][MAXSIZE];  //邻接矩阵
+	int n,e;  //顶点数和边数
+}graph;
+
+struct
+{
+	int end;
+	int len;
+}minedge[7];
+
+void Create_Graph(graph *ga)
+{
+	int i,j,k,w;
+	printf("请输入图的顶点数和边数:\n");
+	scanf("%d%d",&(ga->n),&(ga->e));
+	fflush(stdin);
+	printf("请输入顶点信息(顶点编号),建立顶点信息表:\n");
+	for (i=0;i<ga->n;i++)
+		scanf("%c",&(ga->vexs[i]));  //输入顶点信息
+	for (i=0;i<ga->n;i++)
+	{
+		for(j=0;j<ga->n;j++)
+		{
+			if(i==j)
+				ga->edges[i][j]=0;
+			else
+				ga->edges[i][j]=INTMAX;
+		}
+	}
+	for (k=0;k<ga->e;k++)
+	{
+		printf("请输入第%d条边的顶点序号i,j和权值w:",k+1);
+		scanf("%d,%d,%d",&i,&j,&w);
+		ga->edges[i][j]=w;
+		ga->edges[j][i]=w;
+	}
+}
+
+void prim(graph *g,int u)
+{
+	int v,k,j,min;
+	for(v=0;v<g->n;v++) 
+	{
+		if(v!=u)
+		{
+			minedge[v].end=u;
+			minedge[v].len=g->edges[v][u];
+		}
+	}
+	minedge[u].len=0;
+	for(k = 1;k< g->n;k++)
+	{
+		min = INTMAX;
+		for(j=0;j<g->n;j++)
+		{
+			if(minedge[j].len>0&&minedge[j].len<min)
+			{
+				min=minedge[j].len;
+				v=j;
+			}
+		}
+		if(min=INTMAX)
+		{ 
+			//printf("图不连通，无生成树！");
+		}
+		printf("%d %d\n",v,minedge[v].end);
+		minedge[v].len=- minedge[v].len;
+		for (j=0;j<g->n;j++)
+		{
+			if (g-> edges [j][v]<minedge[j].len)
+			{
+				minedge[j].len = g-> edges [j][v];
+				minedge[j].end = v;
+			}
+		}
+	}
+}
+
+int main()
+{
+	graph x,*g;
+	g=&x;
+	Create_Graph(g);
+	prim(g,0);
+	return 0;
+}
